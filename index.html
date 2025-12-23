@@ -320,6 +320,12 @@
       totalPriceSpan.textContent = totalPrice;
     }
     
+    function sanitizeHTML(str) {
+      const temp = document.createElement('div');
+      temp.textContent = str;
+      return temp.innerHTML;
+    }
+
     function handleFormSubmit(event) {
       event.preventDefault();
     
@@ -357,7 +363,7 @@
         dates: datePickerInput.value,
         breakfastCost: totalBreakfastCostSpan.textContent,
         totalPrice: totalPriceSpan.textContent,
-        name: guestNameInput.value.trim(),
+        name: sanitizeHTML(guestNameInput.value.trim()),
         guestemail: emailValue
       };
     
