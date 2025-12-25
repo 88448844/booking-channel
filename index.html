@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css;
+    script-src 'self' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-xg2R9fSDsfO93aJLjHtjBH8Px7A/4IfGHUEBpB9SC2E=' https://cdn.jsdelivr.net/npm/flatpickr https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js;
+    connect-src https://api.emailjs.com;
+  ">
   <title>Booking Widget</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
