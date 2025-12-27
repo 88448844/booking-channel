@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net 'sha256-kcAb9rYkpmP5V6y3COGYhUz9JkEG/2qPD/b1NKIhagM='; script-src 'self' https://cdn.jsdelivr.net 'sha256-jZMEZq6PH2XhgD/mfhUAU/TNu+U8zUhSUHmWVfub8lM=' 'sha256-dQ1UfmYH3jVpNM9rjIaRTzVIfcrpQsM1BxJgb4c3NII='; img-src 'self'; connect-src https://*.emailjs.com;">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking Widget</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" integrity="sha256-GzSkJVLJbxDk36qko2cnawOGiqz/Y8GsQv/jMTUrx1Q=" crossorigin="anonymous">
   <style>
     :root {
       --primary-color: #2a5a7c;
@@ -46,6 +47,11 @@
       background-size: cover;
       background-position: center;
     }
+    .room-image-budget { background-image: url('budget_double1.jpg'); }
+    .room-image-executive { background-image: url('executive_double.jpg'); }
+    .room-image-deluxe { background-image: url('DeluxeDouble1.jpg'); }
+    .room-image-triple { background-image: url('triple_deluxe1.jpg'); }
+    .room-image-family { background-image: url('family_room.jpg'); }
     .room-details {
       flex-grow: 1;
       min-width: 200px;
@@ -129,7 +135,7 @@
     }
   </style>
   <!-- Updated EmailJS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" integrity="sha256-JJ9ROfATluILBn++bbFzFZgfscNsZNZN8iS88Ph1Dqs=" crossorigin="anonymous"></script>
   <script>
     (function(){
       // Initialize EmailJS with Public Key
@@ -142,7 +148,7 @@
     <h1>Our Rooms</h1>
     <!-- Room Options -->
     <div class="room-option">
-      <div class="room-image" style="background-image: url('budget_double1.jpg');"></div>
+      <div class="room-image room-image-budget"></div>
       <div class="room-details">
         <h3>Budget Double</h3>
         <p>$14/night</p>
@@ -155,7 +161,7 @@
       </div>
     </div>
     <div class="room-option">
-      <div class="room-image" style="background-image: url('executive_double.jpg');"></div>
+      <div class="room-image room-image-executive"></div>
       <div class="room-details">
         <h3>Executive Double</h3>
         <p>$20/night</p>
@@ -167,7 +173,7 @@
       </div>
     </div>
     <div class="room-option">
-      <div class="room-image" style="background-image: url('DeluxeDouble1.jpg');"></div>
+      <div class="room-image room-image-deluxe"></div>
       <div class="room-details">
         <h3>Deluxe Double</h3>
         <p>$25/night</p>
@@ -181,7 +187,7 @@
       </div>
     </div>
     <div class="room-option">
-      <div class="room-image" style="background-image: url('triple_deluxe1.jpg');"></div>
+      <div class="room-image room-image-triple"></div>
       <div class="room-details">
         <h3>Deluxe Triple</h3>
         <p>$30/night</p>
@@ -194,7 +200,7 @@
       </div>
     </div>
     <div class="room-option">
-      <div class="room-image" style="background-image: url('family_room.jpg');"></div>
+      <div class="room-image room-image-family"></div>
       <div class="room-details">
         <h3>Family Room</h3>
         <p>$40/night</p>
@@ -259,7 +265,7 @@
       </form>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr" integrity="sha256-Huqxy3eUcaCwqqk92RwusapTfWlvAasF6p2rxV6FJaE=" crossorigin="anonymous"></script>
   <script>
     // --- EmailJS Configuration ---
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
