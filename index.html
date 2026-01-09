@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-gPzjH9O6qF3dh1onXKAcm17heXym6XPBxHg+UvvR7wo=' 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA='; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; connect-src https://api.emailjs.com;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking Widget</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -129,7 +130,7 @@
     }
   </style>
   <!-- Updated EmailJS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" integrity="sha384-VDbnsk/qjpIVHPQMkJiROI+vW/7cw0k8TFYVLUabm7EWoLEDwcXh09XQ6gQ86Y0B" crossorigin="anonymous"></script>
   <script>
     (function(){
       // Initialize EmailJS with Public Key
@@ -259,7 +260,7 @@
       </form>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr" integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
   <script>
     // --- EmailJS Configuration ---
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
