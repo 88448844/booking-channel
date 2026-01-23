@@ -3,6 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    Content Security Policy (CSP)
+    - default-src 'self': Restricts all resources to the same origin by default.
+    - script-src 'self' [hashes] https://cdn.jsdelivr.net: Allows scripts from the same origin, the specified CDN, and the following inline scripts:
+      - 'sha256-gh7b1wRr8EzPNJ00LdVSuuB1DS2eaD3OhRRJz4xAi94=': The EmailJS initialization script.
+      - 'sha256-gZ4Rn+ZLUmiHRQOgQjh2X24Mkc1RRNTCc1KHx6V7lfY=': The main booking form logic script.
+      - 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=': Dynamically injected script by flatpickr for calendar positioning.
+      - 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA=': Dynamically injected script by flatpickr for event handling.
+    - style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net: Allows stylesheets from the same origin, the specified CDN, and inline style attributes. 'unsafe-inline' is used as a trade-off to avoid refactoring numerous inline styles.
+    - connect-src https://api.emailjs.com: Allows connections to the EmailJS API.
+    - img-src 'self' data:: Allows images from the same origin and data URIs.
+    - font-src https://cdn.jsdelivr.net: Allows fonts from the specified CDN.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-gh7b1wRr8EzPNJ00LdVSuuB1DS2eaD3OhRRJz4xAi94=' 'sha256-gZ4Rn+ZLUmiHRQOgQjh2X24Mkc1RRNTCc1KHx6V7lfY=' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA=' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src https://api.emailjs.com; img-src 'self' data:; font-src https://cdn.jsdelivr.net;">
   <title>Booking Widget</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
@@ -264,7 +278,7 @@
     // --- EmailJS Configuration ---
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
     const EMAILJS_TEMPLATE_ID = "template_gqmsnrg";
-    
+
     // --- DOM Element References ---
     const roomTypeSelect = document.getElementById('roomType');
     const breakfastCountSelect = document.getElementById('breakfastCount');
@@ -278,7 +292,7 @@
     const confirmationDiv = document.getElementById('confirmation');
     const guestNameInput = document.getElementById('guestName');
     const guestEmailInput = document.getElementById('guestEmail');
-    
+
     // --- Flatpickr Initialization ---
     const datePicker = flatpickr(datePickerInput, {
       mode: "range",
@@ -289,12 +303,12 @@
       showMonths: window.innerWidth > 768 ? 2 : 1,
       onChange: updateCalculation
     });
-    
+
     // --- Event Listeners ---
     roomTypeSelect.addEventListener('change', updateCalculation);
     breakfastCountSelect.addEventListener('change', updateCalculation);
     bookingForm.addEventListener('submit', handleFormSubmit);
-    
+
     // --- Functions ---
     function calculateNights(startDate, endDate) {
       if (!startDate || !endDate) return 0;
@@ -302,7 +316,7 @@
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return (endDate > startDate) ? diffDays : 0;
     }
-    
+
     function updateCalculation() {
       const roomRate = parseInt(roomTypeSelect.value, 10) || 0;
       const breakfastCostPerPerson = 4;
@@ -313,16 +327,16 @@
       const totalBreakfastCost = dailyBreakfastCost * nights;
       const roomTotalCost = roomRate * nights;
       const totalPrice = roomTotalCost + totalBreakfastCost;
-    
+
       roomRateSpan.textContent = roomRate;
       nightsSpan.textContent = nights;
       totalBreakfastCostSpan.textContent = totalBreakfastCost;
       totalPriceSpan.textContent = totalPrice;
     }
-    
+
     function handleFormSubmit(event) {
       event.preventDefault();
-    
+
       const selectedDates = datePicker.selectedDates;
       if (selectedDates.length < 2) {
         showFeedback("Please select both a check-in and check-out date.", "error");
@@ -346,11 +360,11 @@
         guestEmailInput.focus();
         return;
       }
-    
+
       confirmButton.disabled = true;
       confirmButton.textContent = 'Sending Booking...';
       showFeedback("Processing your booking request...", "processing");
-    
+
       // Map the parameters to match your EmailJS template variables
       const templateParams = {
         roomType: roomTypeSelect.selectedOptions[0].text,
@@ -360,9 +374,9 @@
         name: guestNameInput.value.trim(),
         guestemail: emailValue
       };
-    
+
       console.log("Sending email with parameters:", templateParams);
-    
+
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(function(response) {
           console.log('EmailJS SUCCESS!', response.status, response.text);
@@ -389,14 +403,14 @@
           confirmButton.textContent = 'Confirm Booking';
         });
     }
-    
+
     function showFeedback(message, type = "info") {
       confirmationDiv.textContent = message;
       confirmationDiv.className = '';
       confirmationDiv.classList.add(type);
       confirmationDiv.style.display = 'block';
     }
-    
+
     updateCalculation();
   </script>
 </body>
