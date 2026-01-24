@@ -3,8 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    Content Security Policy (CSP)
+    - default-src 'self': Restricts all resources to the same origin by default.
+    - script-src:
+      - 'self': Allows scripts from the same origin.
+      - 'sha256-Lq...': Whitelists the inline EmailJS initialization script.
+      - 'sha256-sf2...': Whitelists the main inline booking logic script.
+      - 'sha256-ZrT...': Whitelists a script dynamically injected by flatpickr.
+      - 'sha256-jrS...': Whitelists a second script dynamically injected by flatpickr.
+      - https://cdn.jsdelivr.net: Allows scripts from the jsdelivr CDN.
+    - style-src:
+      - 'self': Allows stylesheets from the same origin.
+      - 'unsafe-inline': Allows inline styles (needed for flatpickr).
+      - https://cdn.jsdelivr.net: Allows stylesheets from the jsdelivr CDN.
+    - connect-src:
+      - https://api.emailjs.com: Allows connections to the EmailJS API for sending emails.
+    - img-src:
+      - 'self': Allows images from the same origin.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Lq+MtItSVpk34iUNnE/FMEZGrENVYj2qEWKg0FkJTMo=' 'sha256-sf2hy4bpCCNGxYF8DZE3eXbPPKbryRV2JOKEJAAE6L0=' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA=' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src https://api.emailjs.com; img-src 'self';">
   <title>Booking Widget</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" integrity="sha384-RkASv+6KfBMW9eknReJIJ6b3UnjKOKC5bOUaNgIY778NFbQ8MtWq9Lr/khUgqtTt" crossorigin="anonymous">
   <style>
     :root {
       --primary-color: #2a5a7c;
@@ -129,7 +149,7 @@
     }
   </style>
   <!-- Updated EmailJS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" integrity="sha384-VDbnsk/qjpIVHPQMkJiROI+vW/7cw0k8TFYVLUabm7EWoLEDwcXh09XQ6gQ86Y0B" crossorigin="anonymous"></script>
   <script>
     (function(){
       // Initialize EmailJS with Public Key
@@ -259,7 +279,7 @@
       </form>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr" integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
   <script>
     // --- EmailJS Configuration ---
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
