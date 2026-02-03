@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' https://cdn.jsdelivr.net 'sha256-h6KwCrMFaokXUKTdzwLL184zVEf6PR8msbkeyoz0njg=' 'sha256-y7cTfw5SiRxBO/DLzbZNaiBdY5qh4lPS7KDFuSl+EM8=' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA=';
+    script-src 'self' https://cdn.jsdelivr.net 'sha256-h6KwCrMFaokXUKTdzwLL184zVEf6PR8msbkeyoz0njg=' 'sha256-y7cTfw5SiRxBO/DLzbZNaiBdY5qh4lPS7KDFuSl+EM8=' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-hLQDi8KzHTgA7oB5Peakl3Hgd8bZR0TO3NKYCHAM9tw=';
     style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
     connect-src https://api.emailjs.com;
     img-src 'self';
@@ -223,11 +223,11 @@
         <div class="form-group">
           <label for="roomType">Room Type:</label>
           <select id="roomType">
-            <option value="14">Budget Double - $14</option>
-            <option value="20">Executive Double - $20</option>
-            <option value="25" selected>Deluxe Double - $25</option>
-            <option value="30">Deluxe Triple - $30</option>
-            <option value="40">Family Room - $40</option>
+            <option value="budget">Budget Double - $14</option>
+            <option value="executive">Executive Double - $20</option>
+            <option value="deluxe" selected>Deluxe Double - $25</option>
+            <option value="triple">Deluxe Triple - $30</option>
+            <option value="family">Family Room - $40</option>
           </select>
         </div>
         <div class="form-group">
@@ -247,11 +247,11 @@
         <!-- Name and Email Fields -->
         <div class="form-group">
           <label for="guestName">Full Name:</label>
-          <input type="text" id="guestName" required placeholder="Enter your full name">
+          <input type="text" id="guestName" required maxlength="100" placeholder="Enter your full name">
         </div>
         <div class="form-group">
           <label for="guestEmail">Email Address:</label>
-          <input type="email" id="guestEmail" required placeholder="Enter your email address">
+          <input type="email" id="guestEmail" required maxlength="100" placeholder="Enter your email address">
         </div>
         <!-- End Fields -->
         <div class="price-summary">
@@ -269,10 +269,19 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr" integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
   <script>
+    // --- Room Data (Source of Truth) ---
+    const ROOM_DATA = {
+      "budget": { name: "Budget Double", rate: 14 },
+      "executive": { name: "Executive Double", rate: 20 },
+      "deluxe": { name: "Deluxe Double", rate: 25 },
+      "triple": { name: "Deluxe Triple", rate: 30 },
+      "family": { name: "Family Room", rate: 40 }
+    };
+
     // --- EmailJS Configuration ---
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
     const EMAILJS_TEMPLATE_ID = "template_gqmsnrg";
-    
+
     // --- DOM Element References ---
     const roomTypeSelect = document.getElementById('roomType');
     const breakfastCountSelect = document.getElementById('breakfastCount');
@@ -286,7 +295,7 @@
     const confirmationDiv = document.getElementById('confirmation');
     const guestNameInput = document.getElementById('guestName');
     const guestEmailInput = document.getElementById('guestEmail');
-    
+
     // --- Flatpickr Initialization ---
     const datePicker = flatpickr(datePickerInput, {
       mode: "range",
@@ -297,12 +306,12 @@
       showMonths: window.innerWidth > 768 ? 2 : 1,
       onChange: updateCalculation
     });
-    
+
     // --- Event Listeners ---
     roomTypeSelect.addEventListener('change', updateCalculation);
     breakfastCountSelect.addEventListener('change', updateCalculation);
     bookingForm.addEventListener('submit', handleFormSubmit);
-    
+
     // --- Functions ---
     function calculateNights(startDate, endDate) {
       if (!startDate || !endDate) return 0;
@@ -310,9 +319,10 @@
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return (endDate > startDate) ? diffDays : 0;
     }
-    
+
     function updateCalculation() {
-      const roomRate = parseInt(roomTypeSelect.value, 10) || 0;
+      const roomKey = roomTypeSelect.value;
+      const roomRate = ROOM_DATA[roomKey]?.rate || 0;
       const breakfastCostPerPerson = 4;
       const breakfastScore = parseInt(breakfastCountSelect.value, 10) || 0;
       const selectedDates = datePicker.selectedDates;
@@ -321,16 +331,16 @@
       const totalBreakfastCost = dailyBreakfastCost * nights;
       const roomTotalCost = roomRate * nights;
       const totalPrice = roomTotalCost + totalBreakfastCost;
-    
+
       roomRateSpan.textContent = roomRate;
       nightsSpan.textContent = nights;
       totalBreakfastCostSpan.textContent = totalBreakfastCost;
       totalPriceSpan.textContent = totalPrice;
     }
-    
+
     function handleFormSubmit(event) {
       event.preventDefault();
-    
+
       const selectedDates = datePicker.selectedDates;
       if (selectedDates.length < 2) {
         showFeedback("Please select both a check-in and check-out date.", "error");
@@ -354,23 +364,30 @@
         guestEmailInput.focus();
         return;
       }
-    
+
       confirmButton.disabled = true;
       confirmButton.textContent = 'Sending Booking...';
       showFeedback("Processing your booking request...", "processing");
-    
+
+      const roomKey = roomTypeSelect.value;
+      const roomInfo = ROOM_DATA[roomKey] || { name: "Unknown", rate: 0 };
+      const breakfastCostPerPerson = 4;
+      const breakfastScore = parseInt(breakfastCountSelect.value, 10) || 0;
+      const totalBreakfastCost = breakfastScore * breakfastCostPerPerson * nights;
+      const totalPrice = (roomInfo.rate * nights) + totalBreakfastCost;
+
       // Map the parameters to match your EmailJS template variables
       const templateParams = {
-        roomType: roomTypeSelect.selectedOptions[0].text,
+        roomType: roomInfo.name,
         dates: datePickerInput.value,
-        breakfastCost: totalBreakfastCostSpan.textContent,
-        totalPrice: totalPriceSpan.textContent,
+        breakfastCost: totalBreakfastCost,
+        totalPrice: totalPrice,
         name: guestNameInput.value.trim(),
         guestemail: emailValue
       };
-    
+
       console.log("Sending email with parameters:", templateParams);
-    
+
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(function(response) {
           console.log('EmailJS SUCCESS!', response.status, response.text);
@@ -397,14 +414,14 @@
           confirmButton.textContent = 'Confirm Booking';
         });
     }
-    
+
     function showFeedback(message, type = "info") {
       confirmationDiv.textContent = message;
       confirmationDiv.className = '';
       confirmationDiv.classList.add(type);
       confirmationDiv.style.display = 'block';
     }
-    
+
     updateCalculation();
   </script>
 </body>
