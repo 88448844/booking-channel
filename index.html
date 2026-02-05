@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' https://cdn.jsdelivr.net 'sha256-h6KwCrMFaokXUKTdzwLL184zVEf6PR8msbkeyoz0njg=' 'sha256-y7cTfw5SiRxBO/DLzbZNaiBdY5qh4lPS7KDFuSl+EM8=' 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-jrS6Pr2xliONRGeazdvepE8uiERdS1Y6PwX1GprKtsA=';
+    script-src 'self' https://cdn.jsdelivr.net 'sha256-ZrTm1//pGyOsw/aSjGQJVXTrNNZi+o3CC8aeQxo0Khg=' 'sha256-GwTsjWDZh+m899nTzgGqa8M3+2acpaNINaxBio5KFcY=';
     style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';
     connect-src https://api.emailjs.com;
     img-src 'self';
     font-src https://cdn.jsdelivr.net;
   ">
   <title>Booking Widget</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" integrity="sha384-RkASv+6KfBMW9eknReJIJ6b3UnjKOKC5bOUaNgIY778NFbQ8MtWq9Lr/khUgqtTt" crossorigin="anonymous">
   <style>
     :root {
       --primary-color: #2a5a7c;
@@ -223,11 +223,11 @@
         <div class="form-group">
           <label for="roomType">Room Type:</label>
           <select id="roomType">
-            <option value="14">Budget Double - $14</option>
-            <option value="20">Executive Double - $20</option>
-            <option value="25" selected>Deluxe Double - $25</option>
-            <option value="30">Deluxe Triple - $30</option>
-            <option value="40">Family Room - $40</option>
+            <option value="budget">Budget Double - $14</option>
+            <option value="executive">Executive Double - $20</option>
+            <option value="deluxe" selected>Deluxe Double - $25</option>
+            <option value="triple">Deluxe Triple - $30</option>
+            <option value="family">Family Room - $40</option>
           </select>
         </div>
         <div class="form-group">
@@ -247,11 +247,11 @@
         <!-- Name and Email Fields -->
         <div class="form-group">
           <label for="guestName">Full Name:</label>
-          <input type="text" id="guestName" required placeholder="Enter your full name">
+          <input type="text" id="guestName" required maxlength="100" placeholder="Enter your full name">
         </div>
         <div class="form-group">
           <label for="guestEmail">Email Address:</label>
-          <input type="email" id="guestEmail" required placeholder="Enter your email address">
+          <input type="email" id="guestEmail" required maxlength="100" placeholder="Enter your email address">
         </div>
         <!-- End Fields -->
         <div class="price-summary">
@@ -270,6 +270,15 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr" integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
   <script>
     // --- EmailJS Configuration ---
+    // --- Room Data (Source of Truth) ---
+    const ROOM_DATA = {
+      "budget": { name: "Budget Double", price: 14 },
+      "executive": { name: "Executive Double", price: 20 },
+      "deluxe": { name: "Deluxe Double", price: 25 },
+      "triple": { name: "Deluxe Triple", price: 30 },
+      "family": { name: "Family Room", price: 40 }
+    };
+
     const EMAILJS_SERVICE_ID = "service_ap4z6sk";
     const EMAILJS_TEMPLATE_ID = "template_gqmsnrg";
     
@@ -312,7 +321,8 @@
     }
     
     function updateCalculation() {
-      const roomRate = parseInt(roomTypeSelect.value, 10) || 0;
+      const roomKey = roomTypeSelect.value;
+      const roomRate = ROOM_DATA[roomKey] ? ROOM_DATA[roomKey].price : 0;
       const breakfastCostPerPerson = 4;
       const breakfastScore = parseInt(breakfastCountSelect.value, 10) || 0;
       const selectedDates = datePicker.selectedDates;
@@ -360,11 +370,19 @@
       showFeedback("Processing your booking request...", "processing");
     
       // Map the parameters to match your EmailJS template variables
+      // Re-calculate values from source of truth to prevent price tampering
+      const roomKey = roomTypeSelect.value;
+      const roomInfo = ROOM_DATA[roomKey] || { name: "Unknown", price: 0 };
+      const breakfastCostPerPerson = 4;
+      const breakfastScore = parseInt(breakfastCountSelect.value, 10) || 0;
+      const totalBreakfastCost = breakfastScore * breakfastCostPerPerson * nights;
+      const totalPrice = (roomInfo.price * nights) + totalBreakfastCost;
+
       const templateParams = {
-        roomType: roomTypeSelect.selectedOptions[0].text,
+        roomType: roomInfo.name,
         dates: datePickerInput.value,
-        breakfastCost: totalBreakfastCostSpan.textContent,
-        totalPrice: totalPriceSpan.textContent,
+        breakfastCost: totalBreakfastCost,
+        totalPrice: totalPrice,
         name: guestNameInput.value.trim(),
         guestemail: emailValue
       };
